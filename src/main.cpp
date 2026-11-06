@@ -1,6 +1,5 @@
 #include <Geode/Geode.hpp>
-#include <Geode/modify/MenuLayer.hpp>
-#include <Geode/ui/SceneManager.hpp>
+#include <Geode/modify/CCDirector.hpp>
 #include <vector>
 #include <cmath>
 #include <cstdlib>
@@ -106,17 +105,16 @@ public:
 	}
 };
 
-// Se crea una sola vez y persiste entre escenas (menús, niveles, editor...)
-class $modify(MenuLayer) {
-	bool init() {
-		if (!MenuLayer::init()) return false;
-		static bool created = false;
-		if (!created) {
-			created = true;
-			if (auto layer = RainLayer::create()) {
-				SceneManager::get()->keepAcrossScenes(layer);
-			}
-		}
-		return true;
+static Ref<RainLayer> g_rain = nullptr;
+
+// Mueve la capa de lluvia a cada escena nueva (menus, niveles, editor...)
+class $modify(RainDirector, CCDirector) {
+	void willSwitchToScene(CCScene* scene) {
+		CCDirector::willSwitchToScene(scene);
+		if (!scene) return;
+		if (!g_rain) g_rain = RainLayer::create();
+		if (!g_rain) return;
+		g_rain->removeFromParent();
+		scene->addChild(g_rain, 1000000);
 	}
 };
