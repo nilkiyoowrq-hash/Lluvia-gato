@@ -1,5 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/MenuLayer.hpp>
+#include <Geode/ui/SceneManager.hpp>
 #include <vector>
 #include <cmath>
 #include <cstdlib>
@@ -14,9 +15,9 @@ class RainLayer : public CCNode {
 protected:
 	struct Drop {
 		CCSprite* spr;
-		float vy;
-		float vx;
-		float spin;
+		float vy;    // píxeles/seg hacia abajo
+		float vx;    // deriva horizontal
+		float spin;  // grados/seg (0 = no gira)
 	};
 	std::vector<Drop> m_drops;
 	float m_spawnTimer = 0.f;
@@ -105,6 +106,7 @@ public:
 	}
 };
 
+// Se crea una sola vez y persiste entre escenas (menús, niveles, editor...)
 class $modify(MenuLayer) {
 	bool init() {
 		if (!MenuLayer::init()) return false;
